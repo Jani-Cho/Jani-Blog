@@ -1,0 +1,45 @@
+@-moz-keyframes
+    rightToleft
+        from 
+	  transform translateX(100%)
+    leftToright
+        from 
+	  transform translateX(-100%)
+
+to
+    transform translateX(0)
+    transform translateX(0)
+    transform translateX(0)
+    transform translateX(0)
+    transform translateX(0)
+    transform translateX(0)
+
+
+    @-webkit-keyframes
+        rightToleft
+            from
+	  transform translateX(100%)
+        leftToright
+            from 
+	  transform translateX(-100%)
+    @keyframes
+        rightToleft
+            from 
+	  transform translateX(100%)
+        leftToright
+            from 
+	  transform translateX(-100%)
+    .rightToleft
+        -moz-animation rightToleft 0.5s linear 0s 1 alternate
+        -webkit-animation rightToleft 0.5s linear 0s 1 alternate
+        animation rightToleft 0.5s linear 0s 1 alternate
+        -moz-animation-fill-mode forwards
+        -webkit-animation-fill-mode forwards
+        animation-fill-mode forwards
+    .leftToright
+        -moz-animation leftToright 0.5s linear 0s 1 alternate
+        -webkit-animation leftToright 0.5s linear 0s 1 alternate
+        animation leftToright 0.5s linear 0s 1 alternate
+        -moz-animation-fill-mode forwards
+        -webkit-animation-fill-mode forwards
+        animation-fill-mode forwards
