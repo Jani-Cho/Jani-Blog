@@ -1,14 +1,6 @@
 <template>
 
   <v-container fluid grid-list-xs>
-    <v-layout row wrap class="mt-3 mb-5">
-      <v-flex xs-12 sm6 class="text-xs-center text-sm-right">
-        <v-btn large router to="/works/js" class="secondary">Javascript作品</v-btn>
-      </v-flex>
-      <v-flex xs-12 sm6 class="text-xs-center text-sm-left">
-        <v-btn large router to="/works/vue" class="secondary">VUE作品</v-btn>
-      </v-flex>
-    </v-layout>
     <v-layout row wrap class="page1">
       <v-flex xs12 sm6 v-for="(work, index) in updateWorks" :key="index" class="pl-2 pr-2 mb-4">
         <v-card>
@@ -65,7 +57,12 @@
 </template>
 
 <script>
+import workType from './workType'
+
   export default {
+    components:{
+      'work-type': workType
+    },
     data() {
       return {
         currentPage: 1, //現在頁面

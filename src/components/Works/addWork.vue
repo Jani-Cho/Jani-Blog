@@ -59,20 +59,21 @@
                     </v-layout>
                     <v-layout row>
                         <v-flex xs12 sm6 offset-sm3>
-                            <v-text-field
-                                name="imageUrl"
-                                label="ImageUrl"
-                                id="imageUrl"
-                                v-model="img"
-                                required
-                                
+                            <!-- 原本的input被隱藏，透過onPickFile來觸發 -->
+                            <v-btn raised class="primary" @click="onPickFile">上傳圖片</v-btn>
+                            <input 
+                            type="file" 
+                            ref="fileInput"
+                            style="display:none" 
+                            accept="image/*"
+                            @change="onFilePicked"
                             >
-                            </v-text-field>
+                    
                         </v-flex>
                     </v-layout>
                     <v-layout row>
                         <v-flex xs12 sm6 offset-sm3>
-                            <img :src="img" width="100%">
+                            <img :src="imgurl" width="100%">
                         </v-flex>
                     </v-layout>
                     <v-layout row>
@@ -87,24 +88,9 @@
                             </v-textarea>
                         </v-flex>
                     </v-layout>
-                    <!-- <v-layout row>
-                        <v-flex xs12 sm6 offset-sm3>
-                        <h4>Choose a Data & Time</h4>
-                        </v-flex>
-                    </v-layout>
-                    <v-layout row class="mb-2">
-                        <v-flex xs12 sm6 offset-sm3>
-                        <v-date-picker v-model="date"></v-date-picker>
-                        </v-flex>
-                    </v-layout>
                     <v-layout row>
                         <v-flex xs12 sm6 offset-sm3>
-                        <v-time-picker v-model="time" format="24hr"></v-time-picker>
-                        </v-flex>
-                    </v-layout> -->
-                    <v-layout row>
-                        <v-flex xs12 sm6 offset-sm3>
-                            <v-btn class="error" :disabled="!fornIsValid" type="submit">送出</v-btn>
+                            <v-btn class="error" :disabled="!formIsValid" type="submit">送出</v-btn>
                         </v-flex>
                     </v-layout>
                 </form>
@@ -119,51 +105,87 @@
             return{
                 title: '',
                 subtitle: '',
-                img: '',
+                imgurl: '',
                 content: '',
                 view: '',
-                github: ''
+                github: '',
+                image: null
             }
         },
         computed:{
-            fornIsValid(){
+            formIsValid(){
                 return this.title !== ''&& 
                 this.subtitle !== '' &&
-                this.img !== ''&&
+                this.imgurl !== ''&&
                 this.view !== ''&&
                 this.github !== ''
             },
-            // submittableDateTime () {
-            //     const date = new Date(this.date)
-            //     if (typeof this.time === 'string') {
-            //     let hours = this.time.match(/^(\d+)/)[1]
-            //     const minutes = this.time.match(/:(\d+)/)[1]
-            //     date.setHours(hours)
-            //     date.setMinutes(minutes)
-            //     } else {
-            //     date.setHours(this.time.getHours())
-            //     date.setMinutes(this.time.getMinutes())
-            //     }
-            //     return date
-            // }
         },
         methods:{
+
+            /* 新增文章 */
             onAddWork(){
-                // if (!this.formIsValid) {
-                // return
-                // }
+                // console.log('送出') 
+
+                if (!this.image){
+                    // console.log('image失敗')
+                    return
+                }
+                // console.log('image成功')
                 const workData={
                     title: this.title,
                     subtitle: this.subtitle,
-                    img: this.img,
+                    image: this.image,
+                    imgurl: this.imgurl,
                     content: this.content,
                     view: this.view,
                     github: this.github
                 }
+
+                /* 此處workData並沒有imgurl，只有將files[0](image)傳入*/
+
+
+                // console.log('workData',workData)
                 // console.log('I add work')
                 this.$store.dispatch('addToWork', workData)
                 this.$router.push('/works')
 
+            },
+
+            /* 新增圖片 */
+            onPickFile(){
+                /* fileInput為上傳圖片原input的ref，原來的input被隱藏，透過onPickFile來觸發 */
+                this.$refs.fileInput.click(); 
+            },
+
+            /* 上傳圖片的input監聽change */
+            onFilePicked(event){
+                // console.log('event', event)
+                // console.log('files', files)
+                const files = event.target.files
+                // console.log('files', files)
+                let filename = files[0].name
+                // console.log('filename', filename)
+                /* lastIndexOf() 方法可返回一个指定的字符串值最后出现的位置 */
+                if (filename.lastIndexOf('.') <= 0){
+                    return alert('Please add a valid file!')
+                }
+                const fileReader = new FileReader()
+                // console.log('fileReader',fileReader)
+
+                /* load 事件發生在加載完目標資源、該資源依賴的其他資源時 */
+                fileReader.addEventListener('load', () => {
+                    this.imgurl = fileReader.result
+                })
+                
+                /* FileReader對象的readAsDataURL方法可以將讀取到的文檔編碼成Data URL */
+                fileReader.readAsDataURL(files[0])
+                // console.log('files[0]',files[0])
+
+                this.image = files[0]
+                // console.log('image',this.image)
+
+                // console.log('img',this.img)
             }
         }
     }

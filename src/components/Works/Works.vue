@@ -1,25 +1,20 @@
 <template>
-  <v-container>
-    <v-layout row wrap class="mt-3">
-      <v-flex xs-12 sm4 class="text-xs-center text-sm-right">
-        <v-btn large router to="/works/js" class="secondary">JS作品</v-btn>
-      </v-flex>
-      <v-flex xs-12 sm4 class="text-xs-center text-sm-center">
-        <v-btn large router to="/works/css" class="secondary">HTML5+ CSS3作品</v-btn>
-      </v-flex>
-      <v-flex xs-12 sm4 class="text-xs-center text-sm-left">
-        <v-btn large router to="/works/vue" class="secondary">VUE作品</v-btn>
+  <v-container fluid>
+    <v-layout row>
+      <v-flex>
+        <work-type></work-type>
       </v-flex>
     </v-layout>
+        <router-view></router-view>
   </v-container>
 </template>
 
 <script>
-import jsWorks from './jsWorks'
+import workType from './workType'
+
   export default {
     components:{
-
-
+      'work-type': workType
     },
     computed: {
       updateWorks () {
