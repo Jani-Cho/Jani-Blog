@@ -16,16 +16,6 @@ import workType from './workType'
     components:{
       'work-type': workType
     },
-    computed: {
-      updateWorks () {
-        return this.$store.getters.fearuredWorks
-      }
-    },
-    methods:{
-      onLoadWork(id){
-        this.$router.push('/work/' + id)
-      }
-    }
   }
 </script>
 

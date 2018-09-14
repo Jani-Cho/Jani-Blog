@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import Home from '@/components/Home'
+import About from '@/components/About'
 import Blogs from '@/components/Blogs/Blogs.vue'
 import AddPost from '@/components/Blogs/addPost.vue'
 import SinglePost from '@/components/Blogs/singlePost.vue'
@@ -26,6 +27,11 @@ export default new Router({
       path: '/',
       name: 'Home',
       component: Home
+    },
+    {
+      path: '/about',
+      name: 'About',
+      component: About
     },
     {
       path: '/blogs',
@@ -65,7 +71,7 @@ export default new Router({
       beforeEnter: AuthGuard
     },
 
-    
+
     {
       path: '/works',
       name: 'Works',
@@ -97,7 +103,7 @@ export default new Router({
       path: '/work/add',
       name: 'AddWorks',
       component: AddWork,
-      beforeEnter: AuthGuard
+      // beforeEnter: AuthGuard
     },
   ]
 })

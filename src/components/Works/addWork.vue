@@ -10,87 +10,91 @@
                 <form @submit.prevent="onAddWork">
                     <v-layout row>
                         <v-flex xs12 sm6 offset-sm3>
+                            <!-- 作品標題 -->
                             <v-text-field
                                 name="title"
-                                label="Title"
+                                label="作品名稱 Title"
                                 id="title"
                                 v-model="title"
                                 required>
                             </v-text-field>
-                        </v-flex>
-                    </v-layout>
-                    <v-layout row>
-                        <v-flex xs12 sm6 offset-sm3>
-                            <v-text-field
-                                name="subtitle"
-                                label="Subtitle"
-                                id="subtitle"
-                                v-model="subtitle"
+
+                            <!-- 作品類型 -->
+                            <v-select
+                                :items="types"
+                                v-model="value"
+                                label="作品類型 WorkType"
+                                data-vv-name="select"
                                 required
+                            ></v-select>
+
+                            <!-- 作品內容 -->
+                            <v-text-field
+                                name="content"
+                                label="作品內容 Content"
+                                id="content"
+                                v-model="content"
                             >
                             </v-text-field>
-                        </v-flex>
-                    </v-layout>
-                    <v-layout row>
-                        <v-flex xs12 sm6 offset-sm3>
+
+                            <!-- JS框架 -->
+                            <v-text-field
+                                name="jsframe"
+                                label="JS框架 JsFrame"
+                                id="jsframe"
+                                v-model="jsframe"
+                            >
+                            </v-text-field>
+
+                            <!-- UI框架 -->
+                            <v-text-field
+                                name="uiframe"
+                                label="UI框架 UiFrame"
+                                id="uiframe"
+                                v-model="uiframe"
+                            >
+                            </v-text-field>
+                            
+                            <!-- 上傳圖片 -->
+                            <v-btn raised class="secondary" @click="onPickFile">上傳圖片</v-btn>
+                            <!-- 原本的input被隱藏，透過onPickFile來觸發 -->
+                            <input 
+                                type="file" 
+                                ref="fileInput"
+                                style="display:none" 
+                                accept="image/*"
+                                @change="onFilePicked"
+                            >
+
+                            <!-- 預覽圖片 -->
+                            <img :src="imgurl" width="100%">
+
+                            <!-- github -->
                             <v-text-field
                                 name="githubUrl"
-                                label="githubUrl"
+                                label="Github連結 githubUrl"
                                 id="githubUrl"
                                 v-model="github"
                                 required
-                                
                             >
                             </v-text-field>
-                        </v-flex>
-                    </v-layout>
-                    <v-layout row>
-                        <v-flex xs12 sm6 offset-sm3>
+
+                            <!-- 預覽網址 -->
                             <v-text-field
                                 name="viewUrl"
-                                label="viewUrl"
+                                label="預覽網址 viewUrl"
                                 id="viewUrl"
                                 v-model="view"
                                 required
-                                
                             >
                             </v-text-field>
+
                         </v-flex>
                     </v-layout>
+
                     <v-layout row>
                         <v-flex xs12 sm6 offset-sm3>
-                            <!-- 原本的input被隱藏，透過onPickFile來觸發 -->
-                            <v-btn raised class="primary" @click="onPickFile">上傳圖片</v-btn>
-                            <input 
-                            type="file" 
-                            ref="fileInput"
-                            style="display:none" 
-                            accept="image/*"
-                            @change="onFilePicked"
-                            >
-                    
-                        </v-flex>
-                    </v-layout>
-                    <v-layout row>
-                        <v-flex xs12 sm6 offset-sm3>
-                            <img :src="imgurl" width="100%">
-                        </v-flex>
-                    </v-layout>
-                    <v-layout row>
-                        <v-flex xs12 sm6 offset-sm3>
-                            <v-textarea
-                                name="content"
-                                label="Content"
-                                id="content"
-                                v-model="content"
-                                
-                            >
-                            </v-textarea>
-                        </v-flex>
-                    </v-layout>
-                    <v-layout row>
-                        <v-flex xs12 sm6 offset-sm3>
-                            <v-btn class="error" :disabled="!formIsValid" type="submit">送出</v-btn>
+                            <v-btn class="primary" :disabled="!formIsValid" type="submit">送出</v-btn>
                         </v-flex>
                     </v-layout>
                 </form>
@@ -103,52 +107,57 @@
     export default{
         data(){
             return{
-                title: '',
-                subtitle: '',
-                imgurl: '',
-                content: '',
-                view: '',
-                github: '',
-                image: null
+                title: '', /* 作品名稱 */
+                value: null,  /* 作品類型 */
+                content: '',  /* 作品內容 */
+                // subtitle: '',  /* */
+                jsframe: '',  /* js框架 */
+                uiframe: '',  /* ui框架 */
+                imgurl: '',  /* 圖片Data URL(base64) */
+                github: '',  /* giithub連結 */
+                view: '',  /* 預覽連結 */
+                image: '', /* 圖片資訊 */
+                types: [  /* 類型列表 */
+                    'Html5+Css',
+                    'Javascript',
+                    'Vue'
+                ],
             }
         },
         computed:{
+            /* 確認表單必填項目是否完整 */
             formIsValid(){
                 return this.title !== ''&& 
-                this.subtitle !== '' &&
-                this.imgurl !== ''&&
-                this.view !== ''&&
-                this.github !== ''
+                this.value !== null &&
+                this.imgurl !== '' &&
+                this.github !== '' &&
+                this.view !== ''
             },
+
         },
         methods:{
-
             /* 新增文章 */
             onAddWork(){
-                // console.log('送出') 
 
-                if (!this.image){
-                    // console.log('image失敗')
-                    return
-                }
-                // console.log('image成功')
                 const workData={
                     title: this.title,
-                    subtitle: this.subtitle,
-                    image: this.image,
-                    imgurl: this.imgurl,
+                    worktype: this.value,
                     content: this.content,
+                    jsframe: this.jsframe,
+                    uiframe: this.uiframe,
+                    imgurl: this.imgurl,
+                    github: this.github,
                     view: this.view,
-                    github: this.github
+                    image: this.image
                 }
 
                 /* 此處workData並沒有imgurl，只有將files[0](image)傳入*/
 
 
-                // console.log('workData',workData)
+                console.log('新增文章workData',workData)
                 // console.log('I add work')
                 this.$store.dispatch('addToWork', workData)
-                this.$router.push('/works')
+                this.$router.push('/works/all')
 
             },
 

@@ -42,7 +42,8 @@ new Vue({
       }
     })
     //載入firebase works資料
-    this.$store.dispatch('loadWorks')
+    this.$store.dispatch('loadedWorks')
+
   },
 
 })

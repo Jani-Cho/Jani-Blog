@@ -1,6 +1,6 @@
 <template>
-    <v-dialog width="350px" persistent v-model="editDialog">
-        <v-btn small flat  accent slot="activator">
+    <v-dialog width="500px" persistent v-model="editDialog">
+        <v-btn small flat  accent slot="activator" @click="dataprint">
             
             <v-icon >edit</v-icon>編輯
         </v-btn>
@@ -16,23 +16,84 @@
                 <v-divider></v-divider>
                 <v-layout>
                     <v-flex xs12  >
-                        <v-card-text>
+                        <v-card-text >
                             <v-text-field
                                 name="title"
-                                label="Title"
+                                label="作品名稱 Title"
                                 id="title"
-                                v-model="editedTitle"
+                                v-model="editedtitle"
                                 required>
-                                {{ editedTitle }}
                             </v-text-field>
-                            <v-textarea
+
+                            <!-- 作品類型 -->
+                            <v-select
+                                :items="types"
+                                v-model="value"
+                                label="作品類型 WorkType"
+                                data-vv-name="select"
+                                required
+                            ></v-select>
+
+                            <!-- 作品內容 -->
+                            <v-text-field
                                 name="content"
-                                label="Content"
+                                label="作品內容 Content"
                                 id="content"
-                                v-model="editedContent"
+                                v-model="editedcontent"
                             >
-                            {{ editedContent }}
-                            </v-textarea>
+                            </v-text-field>
+
+                            <!-- JS框架 -->
+                            <v-text-field
+                                name="jsframe"
+                                label="JS框架 JsFrame"
+                                id="jsframe"
+                                v-model="editedjsframe"
+                            >
+                            </v-text-field>
+
+                            <!-- UI框架 -->
+                            <v-text-field
+                                name="uiframe"
+                                label="UI框架 UiFrame"
+                                id="uiframe"
+                                v-model="editeduiframe"
+                            >
+                            </v-text-field>
+                            
+                            <!-- 上傳圖片 -->
+                            <v-btn raised class="secondary" @click="onPickFile">上傳圖片</v-btn>
+                            <!-- 原本的input被隱藏，透過onPickFile來觸發 -->
+                            <input 
+                                type="file" 
+                                ref="fileInput"
+                                style="display:none" 
+                                accept="image/*"
+                                @change="onFilePicked"
+                            >
+
+                            <!-- 預覽圖片 -->
+                            <img :src="editedimgurl" width="100%">
+
+                            <!-- github -->
+                            <v-text-field
+                                name="githubUrl"
+                                label="Github連結 githubUrl"
+                                id="githubUrl"
+                                v-model="editedgithub"
+                                required
+                            >
+                            </v-text-field>
+
+                            <!-- 預覽網址 -->
+                            <v-text-field
+                                name="viewUrl"
+                                label="預覽網址 viewUrl"
+                                id="viewUrl"
+                                v-model="editedview"
+                                required
+                            >
+                            </v-text-field>
                         </v-card-text>
                     </v-flex>
                 </v-layout>
@@ -79,8 +140,20 @@
         data() {
             return {
                 editDialog: false,
-                editedTitle: this.workData.Title,
-                editedContent: this.workData.Content
+                value: '',  /* 作品類型 */
+                editedtitle: '', /* 作品名稱 */
+                editedcontent: '',  /* 作品內容 */
+                editedjsframe: '',  /* js框架 */
+                editeduiframe: '',  /* ui框架 */
+                editedimgurl: '',  /* 圖片Data URL(base64) */
+                editedgithub: '',  /* giithub連結 */
+                editedview: '',  /* 預覽連結 */
+                editedimage: '', /* 重新上傳的圖片資訊 */
+                types: [  /* 類型列表 */
+                    'Html5+Css',
+                    'Javascript',
+                    'Vue',
+                ],
 
             }
         },
@@ -88,29 +161,89 @@
 
             /* 確認是否為該作品發文者 */
             userIsCreator() {
-                console.log('workData',this.workData)
+                return this.$store.getters.user.id === this.workData.CreatorId
+            },
 
-                return this.$store.getters.user.id === this.workData.id
-            }            
         },
         methods:{
+            /* 重新作品詳細資料 */
+            dataprint(){
+                this.editedtitle = this.workData.Title,
+                this.value = this.workData.Worktype
+                this.editedcontent = this.workData.Content
+                this.editedjsframe = this.workData.Jsframe
+                this.editeduiframe = this.workData.Uiframe
+                this.editedimgurl = this.workData.ImgUrl
+                this.editedgithub = this.workData.Github
+                this.editedview = this.workData.View
+            },
+
+            /* 新增圖片 */
+            onPickFile(){
+                /* fileInput為上傳圖片原input的ref，原來的input被隱藏，透過onPickFile來觸發 */
+                this.$refs.fileInput.click(); 
+            },
+
+            /* 上傳圖片的input監聽change */
+            onFilePicked(event){
+                // console.log('event', event)
+                // console.log('files', files)
+                const files = event.target.files
+                // console.log('files', files)
+                let filename = files[0].name
+                // console.log('filename', filename)
+                /* lastIndexOf() 方法可返回一个指定的字符串值最后出现的位置 */
+                if (filename.lastIndexOf('.') <= 0){
+                    return alert('Please add a valid file!')
+                }
+                const fileReader = new FileReader()
+                // console.log('fileReader',fileReader)
+
+                /* load 事件發生在加載完目標資源、該資源依賴的其他資源時 */
+                fileReader.addEventListener('load', () => {
+                    this.editedimgurl = fileReader.result
+                })
+                
+                /* FileReader對象的readAsDataURL方法可以將讀取到的文檔編碼成Data URL */
+                fileReader.readAsDataURL(files[0])
+                // console.log('files[0]',files[0])
+
+                this.editedimage = files[0]
+                // console.log('image',this.image)
+
+                // console.log('img',this.img)
+            },
+            
+            /* 儲存作品資料變更 */
             onSaveChanges(){
-                if(this.editedTitle.trim() === '' && this.editedContent.trim() === ''){
+                /* trim()移除所有的開頭和結尾空白字元 */
+                if(this.editedtitle.trim() === '' && 
+                this.editedcontent.trim() === '' && this.editedimgurl.trim() === ''){
                     return
                 }
 
                 /* 關閉修改視窗 */
                 this.editDialog = false
 
+                /* 跳回列表頁 */
+                this.$router.push('/works/js')
+
                 /* 調度store的 updateWorkData *
                  * 把更新的作品資料 &作品id傳入  */
                 
                 this.$store.dispatch('updateWorkData', {
-                    id: this.workData.id,
-                Title: this.editedTitle,
-                Content: this.editedContent
+                    id: this.workData.Key, /* 作品ID */
+
+                    Title: this.editedtitle, /* 作品名稱 */
+                    Worktype: this.value,  /* 作品類型 */
+                    Content: this.editedcontent,  /* 作品內容 */
+                    Jsframe: this.editedjsframe,  /* js框架 */
+                    Uiframe: this.editeduiframe,  /* ui框架 */
+                    ImgUrl: this.editedimgurl,  /* 圖片Data URL(base64) */
+                    Github: this.editedgithub,  /* giithub連結 */
+                    View: this.editedview,  /* 預覽連結 */
                 })
-                console.log('有來嗎？')
+                // console.log('有來嗎？')
             }
         }
     }

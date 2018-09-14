@@ -42,7 +42,7 @@
 
     </v-navigation-drawer>
     <!-- 電腦版選單 -->
-    <v-toolbar fixed>
+    <v-toolbar fixed flat>
       <!-- 漢堡選單：sm和以上的尺寸隱藏 -->
       <v-toolbar-side-icon
         @click.stop="sideNav = !sideNav"
