@@ -16,27 +16,67 @@
         <v-card>
           <v-card-title>
             <h2 class="dark--text">{{work.Title}}</h2>
+                        <!-- 修改按鈕 : 按鈕要在登入狀態才會顯現 -->
+            <template v-if="userIsAuthenticated">
+              <v-spacer></v-spacer>
+              <app-edit-work :work="work"></app-edit-work>
+            </template>
+            <!-- 修改按鈕 End -->
           </v-card-title>
           <v-img
             :src="work.ImgUrl"
             height="300px"
           ></v-img>
           <v-card-text class="work-content">
+            <v-chip label outline color="primary" v-if="work.Jsframe">{{work.Jsframe}}</v-chip>
+            <v-chip label outline color="secondery" v-if="work.Uiframe">{{work.Uiframe}}</v-chip>
             <div class="error--text">{{work.Content}}</div>
             <!-- <div >{{work.Datatype}}</div> -->
           </v-card-text>
           <v-card-actions>
             <v-spacer></v-spacer>
-            <v-btn 
-            dark 
-            color="orange" 
-            @click="goDetail(work.Id)">查看內容{{work.Id}}</v-btn>
+            <v-btn flat color="orange" @click="openLink(work.View)"  >VIEW</v-btn>
+            <v-btn flat  color="orange" @click="openLink(work.Github)" >GITHUB</v-btn>
           </v-card-actions>
         </v-card>
         
 
       </v-flex>
 
+    </v-layout>
+    <!-- 所有作品列表 Page1-->
+    <v-layout row wrap v-else class="workCard">
+      <v-flex sm12 md6 offset-md0 v-for="(work, index) in works" :key="index" class="mb-4 text--left pl-3 pr-3">
+        <v-card>
+          <v-card-title>
+            <h2 class="dark--text">{{work.Title}}</h2>
+                        <v-chip label v-if="work.Jsframe">{{work.Jsframe}}</v-chip>
+            <v-chip label v-if="work.Cssframe">{{work.Cssframe}}</v-chip>
+                        <!-- 修改按鈕 : 按鈕要在登入狀態才會顯現 -->
+            <template v-if="userIsAuthenticated">
+              <v-spacer></v-spacer>
+              <app-edit-work :workData="workData"></app-edit-work>
+            </template>
+            <!-- 修改按鈕 End -->
+          </v-card-title>
+          <v-img
+            :src="work.ImgUrl"
+            height="300px"
+          ></v-img>
+          <v-card-text class="work-content">
+
+            <div class="error--text">{{work.Content}}</div>
+            <!-- <div >{{work.Datatype}}</div> -->
+          </v-card-text>
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn flat color="orange" @click="openLink(work.View)"  >VIEW</v-btn>
+            <v-btn flat  color="orange" @click="openLink(work.Github)" >GITHUB</v-btn>
+          </v-card-actions>
+        </v-card>
+        
+
+      </v-flex>
     </v-layout>
     <!-- 所有作品列表 Page1 End-->
 
@@ -45,7 +85,7 @@
       <v-flex md10 offset-md1>
         <v-card>
           <v-card-title>
-            <h2 class="dark--text" :v-model="workData.Title"></h2>
+            <h2 class="dark--text">{{workData.Title}}</h2>
 
             <!-- 修改按鈕 : 按鈕要在登入狀態才會顯現 -->
             <template v-if="userIsAuthenticated">
@@ -103,8 +143,7 @@
         // console.log('js預載works:loadedWorks', this.$store.getters.loadedWorks)
         return this.$store.getters.loadedWorks.filter((work) => {
           return work.Worktype === this.type
-        })      
-        
+        })   
       },
 
       /* 確認是否為登入狀態 */
@@ -118,8 +157,8 @@
     methods:{
       /* 前往作品內容(.workDetail)的內容 */
       goDetail(id) {
-        console.log('id', id)
-        // console.log('this.Works[id]', this.Works[id])
+        // console.log('id', id)
+        // console.log('which', this.works)
 
         const showDetail = document.querySelector('.workDetail');
         showDetail.style.display =  `block`;
@@ -156,28 +195,17 @@
             curPageClass.classList.remove('leftToright');
           }, 500)
 
-            console.log('現在的workS',this.works)
           /* 選取正確的內容展示 */
-          let correctData = this.works.find((work) => {
-            return work.Id = "-LM1KQXagIw6voBidT4A"
-                })   
-          
-           
-          console.log('correctData',this.correctData)
-
-          // console.log('現在的workData ImgUrl',this.workData.ImgUrl)
-          console.log('現在的workData Title',this.workData.Title)
-          // this.workData = this.Works[id];
-          // this.workData.Title = this.$store.state.loadedWorks[id].Title;
-          // this.workData.Worktype = this.$store.state.loadedWorks[id].Worktype;
-          // this.workData.Content = this.$store.state.loadedWorks[id].Content;
-          // this.workData.Jsframe = this.$store.state.loadedWorks[id].Jsframe;
-          // this.workData.Uiframe = this.$store.state.loadedWorks[id].Uiframe;
-          // this.workData.ImgUrl = this.$store.state.loadedWorks[id].ImgUrl;
-          // this.workData.Github = this.$store.state.loadedWorks[id].Github;
-          // this.workData.View = this.$store.state.loadedWorks[id].View;
-          // this.workData.CreatorId = this.$store.state.loadedWorks[id].CreatorId;
-          // this.workData.Key = this.$store.state.loadedWorks[id].Id;
+          this.workData.Title = this.$store.state.loadedWorks[id].Title;
+          this.workData.Worktype = this.$store.state.loadedWorks[id].Worktype;
+          this.workData.Content = this.$store.state.loadedWorks[id].Content;
+          this.workData.Jsframe = this.$store.state.loadedWorks[id].Jsframe;
+          this.workData.Uiframe = this.$store.state.loadedWorks[id].Uiframe;
+          this.workData.ImgUrl = this.$store.state.loadedWorks[id].ImgUrl;
+          this.workData.Github = this.$store.state.loadedWorks[id].Github;
+          this.workData.View = this.$store.state.loadedWorks[id].View;
+          this.workData.CreatorId = this.$store.state.loadedWorks[id].CreatorId;
+          this.workData.Key = this.$store.state.loadedWorks[id].Id;
 
           // console.log('被點擊要展示的作品內容workData',this.workData)
         }else{
@@ -226,7 +254,7 @@
 </script>
 <style>
   .work-content{
-    min-height: 70px;
+    height: 70px;
   }
   /* 頁面由右往左滑動特效 */
   @-moz-keyframes rightToleft {

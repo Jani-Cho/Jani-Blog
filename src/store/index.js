@@ -70,7 +70,7 @@ export const store = new Vuex.Store({
 
             /* 從載入的資料中找尋id和更新資料相同的該筆資料回傳為workToUpdate */
 
-            let workToUpdate
+        
 
             // if( payload.worktype === "Javascript"){
             //     console.log('資料被更新的是JS')
@@ -92,9 +92,11 @@ export const store = new Vuex.Store({
             // }
             // else 
             //     console.log('資料被更新的是其他')
-                this.workToUpdate = state.loadedWorks.find(work => {
-                    return work.Key = payload.id
-                })       
+            console.log('payload', payload)
+
+            const workToUpdate = state.loadedWorks.find(work => {
+                return work.Id === payload.Id
+              })
 
             console.log('載入更新資料workToUpdate', workToUpdate)
 
@@ -189,7 +191,7 @@ export const store = new Vuex.Store({
         /* 網頁載入時(main.js)即觸發此Action */
         loadedWorks ({commit}) {
             commit('setLoading', true)
-            firebase.database().ref('works-list/others').once('value')
+            firebase.database().ref('works-list').once('value')
               .then((data) => {
                 const worksList = []
 
@@ -436,7 +438,7 @@ export const store = new Vuex.Store({
         /* 更新作品onSaveChanges時觸發此Action */
         updateWorkData({commit}, payload){
             
-            // console.log('更新要求送出成功')
+            console.log('更新要求送出成功')
             commit('setLoading', true)
 
             /* 將更新資料定義為updateObj物件 */
@@ -474,7 +476,7 @@ export const store = new Vuex.Store({
                 updateObj.View = payload.View
             }
 
-            // console.log('這是要重新上傳的updateObj',updateObj)
+            console.log('這是要重新上傳的updateObj',updateObj)
             /* 比對work資料的id後更新 */
             // if( payload.worktype === "Javascript"){
             //     firebase.database().ref('works-list/js-works-list').child(payload.id).update(updateObj)
@@ -486,10 +488,10 @@ export const store = new Vuex.Store({
             //     firebase.database().ref('works-list/vue-works-list').child(payload.id).update(updateObj)
             // }
             // else 
-                firebase.database().ref('works-list').child(payload.id).update(updateObj)
+                firebase.database().ref('works-list').child(payload.Id).update(updateObj)
             .then((data) => {
                 
-                // console.log('重新上傳成功！',data)
+                console.log('重新上傳成功！',data)
                 commit('setLoading', false)
                 
 

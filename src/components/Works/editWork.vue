@@ -136,9 +136,10 @@
 
 <script>
     export default {
-        props: ['workData'],
+        props: ['work'],
         data() {
             return {
+                userIsCreator: true,
                 editDialog: false,
                 value: '',  /* 作品類型 */
                 editedtitle: '', /* 作品名稱 */
@@ -160,22 +161,25 @@
         computed: {
 
             /* 確認是否為該作品發文者 */
-            userIsCreator() {
-                return this.$store.getters.user.id === this.workData.CreatorId
-            },
+            // userIsCreator() {
+            //     return this.$store.getters.user.id === this.work.CreatorId
+            // },
 
         },
         methods:{
             /* 重新作品詳細資料 */
             dataprint(){
-                this.editedtitle = this.workData.Title,
-                this.value = this.workData.Worktype
-                this.editedcontent = this.workData.Content
-                this.editedjsframe = this.workData.Jsframe
-                this.editeduiframe = this.workData.Uiframe
-                this.editedimgurl = this.workData.ImgUrl
-                this.editedgithub = this.workData.Github
-                this.editedview = this.workData.View
+                let apple = this.$store.getters.user
+                console.log('work', this.work)
+                console.log('user', apple)
+                this.editedtitle = this.work.Title,
+                this.value = this.work.Worktype
+                this.editedcontent = this.work.Content
+                this.editedjsframe = this.work.Jsframe
+                this.editeduiframe = this.work.Uiframe
+                this.editedimgurl = this.work.ImgUrl
+                this.editedgithub = this.work.Github
+                this.editedview = this.work.View
             },
 
             /* 新增圖片 */
@@ -226,13 +230,14 @@
                 this.editDialog = false
 
                 /* 跳回列表頁 */
-                this.$router.push('/works/js')
+                this.$router.push('/works/all')
 
                 /* 調度store的 updateWorkData *
                  * 把更新的作品資料 &作品id傳入  */
+                console.log('有來嗎？')
                 
                 this.$store.dispatch('updateWorkData', {
-                    id: this.workData.Key, /* 作品ID */
+                    Id: this.work.Id, /* 作品ID */
 
                     Title: this.editedtitle, /* 作品名稱 */
                     Worktype: this.value,  /* 作品類型 */
@@ -243,7 +248,6 @@
                     Github: this.editedgithub,  /* giithub連結 */
                     View: this.editedview,  /* 預覽連結 */
                 })
-                // console.log('有來嗎？')
             }
         }
     }

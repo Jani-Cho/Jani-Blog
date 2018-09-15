@@ -16,27 +16,67 @@
         <v-card>
           <v-card-title>
             <h2 class="dark--text">{{work.Title}}</h2>
+                        <!-- 修改按鈕 : 按鈕要在登入狀態才會顯現 -->
+            <template v-if="userIsAuthenticated">
+              <v-spacer></v-spacer>
+              <app-edit-work :work="work"></app-edit-work>
+            </template>
+            <!-- 修改按鈕 End -->
           </v-card-title>
           <v-img
             :src="work.ImgUrl"
             height="300px"
           ></v-img>
           <v-card-text class="work-content">
+            <v-chip label outline color="primary" v-if="work.Jsframe">{{work.Jsframe}}</v-chip>
+            <v-chip label outline color="secondery" v-if="work.Uiframe">{{work.Uiframe}}</v-chip>
             <div class="error--text">{{work.Content}}</div>
             <!-- <div >{{work.Datatype}}</div> -->
           </v-card-text>
           <v-card-actions>
             <v-spacer></v-spacer>
-            <v-btn 
-            dark 
-            color="orange" 
-            @click="goDetail(index)">查看內容</v-btn>
+            <v-btn flat color="orange" @click="openLink(work.View)"  >VIEW</v-btn>
+            <v-btn flat  color="orange" @click="openLink(work.Github)" >GITHUB</v-btn>
           </v-card-actions>
         </v-card>
         
 
       </v-flex>
 
+    </v-layout>
+    <!-- 所有作品列表 Page1-->
+    <v-layout row wrap v-else class="workCard">
+      <v-flex sm12 md6 offset-md0 v-for="(work, index) in works" :key="index" class="mb-4 text--left pl-3 pr-3">
+        <v-card>
+          <v-card-title>
+            <h2 class="dark--text">{{work.Title}}</h2>
+                        <v-chip label v-if="work.Jsframe">{{work.Jsframe}}</v-chip>
+            <v-chip label v-if="work.Cssframe">{{work.Cssframe}}</v-chip>
+                        <!-- 修改按鈕 : 按鈕要在登入狀態才會顯現 -->
+            <template v-if="userIsAuthenticated">
+              <v-spacer></v-spacer>
+              <app-edit-work :workData="workData"></app-edit-work>
+            </template>
+            <!-- 修改按鈕 End -->
+          </v-card-title>
+          <v-img
+            :src="work.ImgUrl"
+            height="300px"
+          ></v-img>
+          <v-card-text class="work-content">
+
+            <div class="error--text">{{work.Content}}</div>
+            <!-- <div >{{work.Datatype}}</div> -->
+          </v-card-text>
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn flat color="orange" @click="openLink(work.View)"  >VIEW</v-btn>
+            <v-btn flat  color="orange" @click="openLink(work.Github)" >GITHUB</v-btn>
+          </v-card-actions>
+        </v-card>
+        
+
+      </v-flex>
     </v-layout>
     <!-- 所有作品列表 Page1 End-->
 
@@ -214,7 +254,7 @@
 </script>
 <style>
   .work-content{
-    min-height: 70px;
+    height: 70px;
   }
   /* 頁面由右往左滑動特效 */
   @-moz-keyframes rightToleft {
