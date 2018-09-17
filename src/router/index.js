@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import Home from '@/components/Home'
+// import Home from '@/components/Home'
 import About from '@/components/About'
 import Blogs from '@/components/Blogs/Blogs.vue'
 import AddPost from '@/components/Blogs/addPost.vue'
@@ -22,12 +22,13 @@ import AuthGuard from './auth-guard'
 Vue.use(Router)
 
 export default new Router({
+  mode: 'history',
   routes: [
-    {
-      path: '/',
-      name: 'Home',
-      component: Home
-    },
+    // {
+    //   path: '/',
+    //   name: 'Home',
+    //   component: Home
+    // },
     {
       path: '/about',
       name: 'About',
@@ -73,7 +74,7 @@ export default new Router({
 
 
     {
-      path: '/works',
+      path: '/',
       name: 'Works',
       component: Works,
       // beforeEnter: AuthGuard

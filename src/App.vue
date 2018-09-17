@@ -100,9 +100,8 @@
     computed:{
       menuItems (){
         let menuItems = [
-          { icon: 'supervisor_account', title: '首頁', link: '/' },
-          { icon: 'room', title: '文章', link: '/blogs' },
-          { icon: 'person', title: '作品', link: '/works/all' },   
+          // { icon: 'room', title: '筆記', link: '/' },
+          // { icon: 'person', title: '作品', link: '/works/all' },   
           // { icon: 'lock_open', title: '登入', link: '/login' },      
         ]
         // if (this.userIsAuthenticated) {

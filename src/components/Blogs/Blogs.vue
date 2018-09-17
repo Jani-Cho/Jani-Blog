@@ -1,59 +1,66 @@
 <template>
   <v-container>
-    <v-layout>
-      <v-flex xs12 sm6 offset-sm3>
+    <v-layout row wrap v-if="loading">
+      <v-flex xs12 class="text-xs-center">
+        <v-progress-circular
+          indeterminate
+          class="primary--text"
+          :width="7"
+          :size="70"></v-progress-circular>
+      </v-flex>
+    </v-layout>
+    <v-layout row wrap v-else>
+      <v-flex xs12>
         <v-card>
-          <v-img
-            src="https://jani-cho.github.io/javascript30/images/js01.png"
-            aspect-ratio="2.75"
-          ></v-img>
-
-          <v-card-title primary-title>
-            <div>
-              <h3 class="headline mb-0">Javascript30</h3>
-              <div>參考線上免費資源Javascript30練習項目，加上個人創意的作品集</div>
-            </div>
+          <v-card-title>
+            <h6 class="primary--text">5J0 0</h6>
+            <template v-if="userIsCreator">
+              <v-spacer></v-spacer>
+              <app-edit-meetup-details-dialog :meetup="meetup"></app-edit-meetup-details-dialog>
+            </template>
           </v-card-title>
-
+          <v-card-media
+            :src="meetup.imageUrl"
+            height="400px"
+          ></v-card-media>
+          <v-card-text>
+            <div class="info--text">{{ meetup.date | date }} - {{ meetup.location }}</div>
+            <div>
+              <app-edit-meetup-date-dialog
+                :meetup="meetup" v-if="userIsCreator">
+              </app-edit-meetup-date-dialog>
+              <app-edit-meetup-time-dialog
+                :meetup="meetup" v-if="userIsCreator">
+              </app-edit-meetup-time-dialog>
+            </div>
+            <div>{{ meetup.description }}</div>
+          </v-card-text>
           <v-card-actions>
             <v-spacer></v-spacer>
-            <v-btn dark color="orange" to="/blog/1">查看內容</v-btn>
+            <v-btn class="primary">Register</v-btn>
           </v-card-actions>
         </v-card>
       </v-flex>
-
-      <!-- PC版本 -->
-      <!-- <v-flex xs12>
-        <v-card>
-          <v-container fluid>
-            <v-layout row>
-              <v-flex xs12 sm10>
-                <v-card-media
-                  src="https://jani-cho.github.io/javascript30/images/js01.png"
-                  height="250px"
-                  width="100%"
-                >
-                </v-card-media>
-              </v-flex>
-              <v-flex xs0 sm12 class="ml-3">
-                <v-card-title primary-title>
-                  <div>
-                    <h3 class="headline mb-0">Javascript30</h3>
-                    <div>參考線上免費資源Javascript30練習項目，加上個人創意的作品集</div>
-                  </div>
-
-                </v-card-title>
-                <v-card-actions class="mt-5">
-                  <v-btn flat color="orange">Share</v-btn>
-                  <v-btn flat color="orange">Explore</v-btn>
-                </v-card-actions>
-              </v-flex>
-            </v-layout>
-          </v-container>
-        </v-card>
-
-      </v-flex> -->
     </v-layout>
   </v-container>
 </template>
 
+<script>
+  export default {
+    computed: {
+
+      userIsAuthenticated () {
+        return this.$store.getters.user !== null && this.$store.getters.user !== undefined
+      },
+      userIsCreator () {
+        if (!this.userIsAuthenticated) {
+          return false
+        }
+        return this.$store.getters.user.id === this.meetup.creatorId
+      },
+      loading () {
+        return this.$store.getters.loading
+      }
+    }
+  }
+</script>
